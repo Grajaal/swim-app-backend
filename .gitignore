@@ -3,8 +3,11 @@
 /node_modules
 /build
 
+# secrets
+src/auth/constants.ts
+
 # db
-/prisma/migrations
+prisma/migrations
 
 # Logs
 logs
