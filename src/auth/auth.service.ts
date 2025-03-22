@@ -1,37 +1,49 @@
-import { Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
-import { UsersService } from "src/users/users.service";
-import { RegisterDto } from "./dto/register.dto";
-import * as bcrypt from 'bcrypt';
+import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { JwtService } from '@nestjs/jwt'
+import { UsersService } from 'src/users/users.service'
+import { RegisterDto } from './dto/register.dto'
+import * as bcrypt from 'bcrypt'
+import { User } from '@prisma/client'
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService,
-  ) { }
+    private jwtService: JwtService
+  ) {}
 
-  async validateUser(email: string, pass: string): Promise<any> {
-    const user = await this.usersService.user({ email });
-    if (user?.password === pass) {
-      const { password, ...result } = user;
-      return result;
+  async validateUser(
+    email: string,
+    pass: string
+  ): Promise<Omit<User, 'password'>> {
+    const user = await this.usersService.user({ email })
+
+    if (!user || !user.password) {
+      throw new UnauthorizedException('Email or password are wrong')
     }
-    return null;
+
+    const passMatch = await bcrypt.compare(pass, user?.password)
+
+    if (!passMatch) {
+      throw new UnauthorizedException('Email or password are wrong')
+    }
+
+    const { password: _password, ...result } = user
+
+    return result
   }
 
   async register(user: RegisterDto) {
-    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const hashedPassword = await bcrypt.hash(user.password, 10)
     return this.usersService.createUser({
       ...user,
-      password: hashedPassword,
-    });
+      password: hashedPassword
+    })
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.userId }
-    return {
-      access_token: this.jwtService.sign(payload),
-    }
+  login(user: Partial<User> | undefined): { token: string } {
+    const payload = { sub: user?.id, email: user?.email, role: user?.role }
+    const token = this.jwtService.sign(payload)
+    return { token }
   }
 }
