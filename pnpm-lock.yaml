@@ -69,6 +69,9 @@ importers:
       '@eslint/js':
         specifier: ^9.18.0
         version: 9.20.0
+      '@faker-js/faker':
+        specifier: ^9.6.0
+        version: 9.6.0
       '@nestjs/cli':
         specifier: ^11.0.0
         version: 11.0.4(@swc/cli@0.6.0(@swc/core@1.10.18)(chokidar@4.0.3))(@swc/core@1.10.18)(@types/node@22.13.4)(esbuild@0.25.1)
@@ -100,7 +103,7 @@ importers:
         specifier: ^29.5.14
         version: 29.5.14
       '@types/node':
-        specifier: ^22.10.7
+        specifier: ^22.13.4
         version: 22.13.4
       '@types/passport-jwt':
         specifier: ^4.0.1
@@ -538,6 +541,10 @@ packages:
   '@eslint/plugin-kit@0.2.6':
     resolution: {integrity: sha512-+0TjwR1eAUdZtvv/ir1mGX+v0tUoR3VEPB8Up0LLJC+whRW0GgBBtpbOkg/a/U4Dxa6l5a3l9AJ1aWIQVyoWJA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@faker-js/faker@9.6.0':
+    resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -4344,6 +4351,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.11.0
       levn: 0.4.1
+
+  '@faker-js/faker@9.6.0': {}
 
   '@humanfs/core@0.19.1': {}
 
