@@ -23,7 +23,50 @@ model User {
   id        String   @id @default(cuid())
   email     String   @unique
   password  String?
-  name      String?
   role      Role
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  coach   Coach?
+  swimmer Swimmer?
+
+  @@map("users")
+}
+
+model Coach {
+  id        String  @id
+  firstName String  @map("first_name")
+  lastName  String? @map("last_name")
+  avatar    String? 
+
+  user User @relation(fields: [id], references: [id], onDelete: Cascade)
+
+  team Team?
+
+  @@map("coaches")
+}
+
+model Swimmer {
+  id        String  @id
+  firstName String  @map("first_name")
+  lastName  String? @map("last_name")
+  avatar    String?
+
+  teamId String? @unique @map("team_id")
+  user   User    @relation(fields: [id], references: [id], onDelete: Cascade)
+  team   Team?   @relation(fields: [teamId], references: [id])
+
+  @@map("swimmers")
+}
+
+model Team {
+  id       String @id @default(cuid())
+  coachId  String @unique @map("coach_id")
+  name     String
+  teamCode String @unique @map("team_code")
+
+  coach Coach @relation(fields: [coachId], references: [id])
+
+  swimmers Swimmer[]
+
+  @@map("teams")
 }
