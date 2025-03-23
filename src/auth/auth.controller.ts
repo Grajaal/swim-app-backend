@@ -32,7 +32,7 @@ export class AuthController {
       maxAge: 3600000
     })
 
-    return { message: 'Successful login' }
+    return { user: req.user }
   }
 
   @UseGuards(JwtAuthGuard)
