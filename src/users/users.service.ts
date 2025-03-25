@@ -43,6 +43,15 @@ export class UsersService {
             lastName: data.lastName || ''
           }
         })
+
+        const teamCode = this.generateUniqueTeamCode()
+
+        await db.team.create({
+          data: {
+            teamCode,
+            coachId: user.id
+          }
+        })
       } else if (data.role === 'SWIMMER') {
         await db.swimmer.create({
           data: {
@@ -55,5 +64,18 @@ export class UsersService {
 
       return user
     })
+  }
+
+  private generateUniqueTeamCode(): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+    let teamCode = ''
+
+    for (let i = 0; i < 6; i++) {
+      teamCode += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      )
+    }
+
+    return teamCode
   }
 }
