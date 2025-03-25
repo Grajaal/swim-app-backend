@@ -61,7 +61,6 @@ model Swimmer {
 model Team {
   id       String @id @default(cuid())
   coachId  String @unique @map("coach_id")
-  name     String
   teamCode String @unique @map("team_code")
 
   coach Coach @relation(fields: [coachId], references: [id])
