@@ -12,6 +12,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard'
 import { Request, Response } from 'express'
 import { RegisterDto } from './dto/register.dto'
 import { JwtAuthGuard } from './guards/jwt-auth.guard'
+import { JwtRequest } from './interfaces/jwt-payload.interface'
 
 @Controller('auth')
 export class AuthController {
@@ -37,7 +38,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('validate')
-  validate(@Req() req: Request) {
+  validate(@Req() req: JwtRequest) {
     return {
       isAuthenticated: true,
       user: req.user
