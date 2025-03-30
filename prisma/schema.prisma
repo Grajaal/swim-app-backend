@@ -36,7 +36,7 @@ model Coach {
   id        String  @id
   firstName String  @map("first_name")
   lastName  String? @map("last_name")
-  avatar    String? 
+  avatar    String?
 
   user User @relation(fields: [id], references: [id], onDelete: Cascade)
 
@@ -51,9 +51,10 @@ model Swimmer {
   lastName  String? @map("last_name")
   avatar    String?
 
-  teamId String? @unique @map("team_id")
-  user   User    @relation(fields: [id], references: [id], onDelete: Cascade)
-  team   Team?   @relation(fields: [teamId], references: [id])
+  teamId     String?     @unique @map("team_id")
+  dailyForms DailyForm[]
+  user       User        @relation(fields: [id], references: [id], onDelete: Cascade)
+  team       Team?       @relation(fields: [teamId], references: [id])
 
   @@map("swimmers")
 }
@@ -68,4 +69,19 @@ model Team {
   swimmers Swimmer[]
 
   @@map("teams")
+}
+
+model DailyForm {
+  id           String   @id @default(cuid())
+  date         DateTime @default(now())
+  sleepHours   Int      @map("sleep_hours")
+  sleepQuality Int      @map("sleep_quality")
+  musclePain   Int      @map("muscle_pain")
+  fatigue      Int
+  stress       Int
+
+  swimmerId String  @map("swimmer_id")
+  swimmer   Swimmer @relation(fields: [swimmerId], references: [id], onDelete: Cascade)
+
+  @@map("daily_forms")
 }
