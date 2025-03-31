@@ -51,7 +51,7 @@ model Swimmer {
   lastName  String? @map("last_name")
   avatar    String?
 
-  teamId     String?     @unique @map("team_id")
+  teamId     String?     @map("team_id")
   dailyForms DailyForm[]
   user       User        @relation(fields: [id], references: [id], onDelete: Cascade)
   team       Team?       @relation(fields: [teamId], references: [id])
