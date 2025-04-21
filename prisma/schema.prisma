@@ -36,7 +36,6 @@ model Coach {
   id        String  @id
   firstName String  @map("first_name")
   lastName  String? @map("last_name")
-  avatar    String?
 
   user User @relation(fields: [id], references: [id], onDelete: Cascade)
 
@@ -46,15 +45,18 @@ model Coach {
 }
 
 model Swimmer {
-  id        String  @id
-  firstName String  @map("first_name")
-  lastName  String? @map("last_name")
-  avatar    String?
+  id        String    @id
+  firstName String    @map("first_name")
+  lastName  String?   @map("last_name")
+  birthDate DateTime? @map("birth_date")
 
   teamId     String?     @map("team_id")
   dailyForms DailyForm[]
   user       User        @relation(fields: [id], references: [id], onDelete: Cascade)
   team       Team?       @relation(fields: [teamId], references: [id])
+
+  groups    Group[]    @relation("group_swimmer")
+  trainings Training[] @relation("training_swimmer")
 
   @@map("swimmers")
 }
@@ -67,6 +69,7 @@ model Team {
   coach Coach @relation(fields: [coachId], references: [id])
 
   swimmers Swimmer[]
+  groups   Group[]
 
   @@map("teams")
 }
@@ -84,4 +87,32 @@ model DailyForm {
   swimmer   Swimmer @relation(fields: [swimmerId], references: [id], onDelete: Cascade)
 
   @@map("daily_forms")
+}
+
+model Group {
+  id     String @id @default(cuid())
+  name   String
+  teamId String @map("team_id")
+
+  team     Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  swimmers Swimmer[] @relation("group_swimmer")
+
+  trainings Training[]
+
+  @@unique([teamId, name])
+  @@map("groups")
+}
+
+model Training {
+  id          String   @id @default(cuid())
+  date        DateTime @default(now())
+  minutes     Int
+  meters      Int
+  description String?
+
+  groupId  String?   @map("group_id")
+  group    Group?    @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  swimmers Swimmer[] @relation("training_swimmer")
+
+  @@map("trainings")
 }
