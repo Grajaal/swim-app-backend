@@ -1,9 +1,19 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards
+} from '@nestjs/common'
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
 import { JwtRequest } from 'src/auth/interfaces/jwt-payload.interface'
 import { CreateDailyFormDto } from './dto/create-daily-form.dto'
 import { SwimmersService } from './swimmers.service'
 import { JoinTeamDto } from './dto/join-team.dto'
+import { GetDailyFormDto } from './dto/get-daily-form.dto'
 
 @Controller('swimmers')
 export class SwimmersController {
@@ -58,5 +68,22 @@ export class SwimmersController {
         id: result.teamId
       }
     }
+  }
+
+  @Get('daily-form')
+  @UseGuards(JwtAuthGuard)
+  async getDailyForm(@Query() query: GetDailyFormDto) {
+    const date = query.date ? new Date(query.date) : new Date()
+    const dailyForm = await this.swimmersService.getSwimmerDailyForm(
+      query.swimmerId,
+      date
+    )
+    return dailyForm
+  }
+
+  @Get(':swimmerId')
+  @UseGuards(JwtAuthGuard)
+  async getSwimmer(@Param('swimmerId') swimmerId: string) {
+    return await this.swimmersService.swimmer({ id: swimmerId })
   }
 }

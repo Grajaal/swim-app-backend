@@ -5,10 +5,17 @@ import {
 } from '@nestjs/common'
 import { PrismaService } from 'src/prisma.service'
 import { CreateDailyFormDto } from './dto/create-daily-form.dto'
+import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class SwimmersService {
   constructor(private db: PrismaService) {}
+
+  async swimmer(swimmerWhereUniqueInput: Prisma.SwimmerWhereUniqueInput) {
+    return await this.db.swimmer.findUnique({
+      where: swimmerWhereUniqueInput
+    })
+  }
 
   async createDailyForm(
     createDailyFormDto: CreateDailyFormDto,
@@ -89,5 +96,41 @@ export class SwimmersService {
     return {
       teamId: team.id
     }
+  }
+
+  async getSwimmersByTeamId(teamId: string) {
+    return await this.db.swimmer.findMany({
+      where: { teamId }
+    })
+  }
+
+  async getSwimmersByCoachId(coachId: string) {
+    const team = await this.db.team.findUnique({
+      where: { coachId }
+    })
+
+    if (!team) {
+      return []
+    }
+
+    return await this.getSwimmersByTeamId(team.id)
+  }
+
+  async getSwimmerDailyForm(swimmerId: string, date: Date) {
+    const startOfDay = new Date(date)
+    startOfDay.setHours(0, 0, 0, 0)
+
+    const endOfDay = new Date(date)
+    endOfDay.setHours(23, 59, 59, 999)
+
+    return await this.db.dailyForm.findFirst({
+      where: {
+        swimmerId,
+        date: {
+          gte: startOfDay,
+          lte: endOfDay
+        }
+      }
+    })
   }
 }
