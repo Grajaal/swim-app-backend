@@ -8,6 +8,7 @@ import { SwimmersModule } from './swimmers/swimmers.module'
 import { CoachesModule } from './coaches/coaches.module'
 import { TeamsModule } from './teams/teams.module'
 import { GroupsModule } from './groups/groups.module'
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { GroupsModule } from './groups/groups.module'
     SwimmersModule,
     CoachesModule,
     TeamsModule,
-    GroupsModule
+    GroupsModule,
+    AiModule
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService]
