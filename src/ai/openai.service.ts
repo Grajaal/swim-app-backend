@@ -2,7 +2,12 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import OpenAI from 'openai'
 import { getTools } from './functions/openai.functions'
-import { ChatCompletionMessageParam } from 'openai/resources/chat'
+import {
+  ChatCompletion,
+  ChatCompletionChunk,
+  ChatCompletionMessageParam
+} from 'openai/resources/chat'
+import { Stream } from 'openai/streaming'
 
 @Injectable()
 export class OpenAIService {
@@ -20,14 +25,29 @@ export class OpenAIService {
   async createChatCompletion(messages: ChatCompletionMessageParam[]) {
     const tools = getTools()
 
-    const completion = await this.openai.chat.completions.create({
+    const response = await this.openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages,
       tools
     })
 
-    this.logger.log(`OpenAI response: ${JSON.stringify(completion)}`)
+    this.logger.log(`OpenAI response: ${JSON.stringify(response)}`)
 
-    return completion.choices[0].message
+    return response.choices[0].message
+  }
+
+  async createChatStreamCompletion(messages: ChatCompletionMessageParam[]) {
+    const tools = getTools()
+
+    const stream = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages,
+      tools,
+      stream: true
+    })
+
+    this.logger.log(`OpenAI response: ${JSON.stringify(stream)}`)
+
+    return stream
   }
 }

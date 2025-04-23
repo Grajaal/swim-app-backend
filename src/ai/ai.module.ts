@@ -4,9 +4,16 @@ import { OpenAIService } from './openai.service'
 import { ConfigService } from '@nestjs/config'
 import { TeamsService } from 'src/teams/teams.service'
 import { PrismaService } from 'src/prisma.service'
+import { CoachesService } from 'src/coaches/coaches.service'
 
 @Module({
   controllers: [AiController],
-  providers: [OpenAIService, ConfigService, TeamsService, PrismaService]
+  providers: [
+    OpenAIService,
+    ConfigService,
+    TeamsService,
+    PrismaService,
+    CoachesService
+  ]
 })
 export class AiModule {}
