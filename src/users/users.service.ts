@@ -66,6 +66,22 @@ export class UsersService {
     })
   }
 
+  async users({ page, limit }: { page: number; limit: number }) {
+    const skip = (page - 1) * limit
+
+    return this.db.user.findMany({
+      skip,
+      take: limit,
+      include: {
+        swimmer: true,
+        coach: true
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    })
+  }
+
   private generateUniqueTeamCode(): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     let teamCode = ''
