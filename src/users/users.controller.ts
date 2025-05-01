@@ -1,6 +1,7 @@
 import { Controller, Get, Query, UseGuards } from '@nestjs/common'
 import { UsersService } from './users.service'
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
+import { GetUsersDto } from './dto/get-users-dto'
 
 @Controller('users')
 export class UsersController {
@@ -8,12 +9,11 @@ export class UsersController {
 
   @Get('')
   @UseGuards(JwtAuthGuard)
-  async users(
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '15'
-  ) {
-    const pageInt = parseInt(page)
-    const limitInt = parseInt(limit)
-    return this.usersService.users({ page: pageInt, limit: limitInt })
+  async users(@Query() query: GetUsersDto) {
+    const page = parseInt(query.page ?? '1', 10)
+    const limit = parseInt(query.limit ?? '10', 10)
+    const { search, role } = query
+
+    return this.usersService.users({ page, limit, search, role })
   }
 }

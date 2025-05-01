@@ -1,7 +1,8 @@
 import { ConflictException, Injectable } from '@nestjs/common'
-import { Prisma, User } from '@prisma/client'
+import { Prisma, Role, User } from '@prisma/client'
 import { RegisterDto } from 'src/auth/dto/register.dto'
 import { PrismaService } from 'src/prisma.service'
+import { GetUsersDto } from './dto/get-users-dto'
 
 @Injectable()
 export class UsersService {
@@ -66,10 +67,39 @@ export class UsersService {
     })
   }
 
-  async users({ page, limit }: { page: number; limit: number }) {
+  async users(params: FindUsersParams) {
+    const { limit, page, role, search } = params
     const skip = (page - 1) * limit
 
-    return this.db.user.findMany({
+    const where: Prisma.UserWhereInput = {}
+
+    if (role) {
+      where.role = role as Role
+    }
+
+    if (search) {
+      where.OR = [
+        {
+          coach: {
+            OR: [
+              { firstName: { contains: search, mode: 'insensitive' } },
+              { lastName: { contains: search, mode: 'insensitive' } }
+            ]
+          }
+        },
+        {
+          swimmer: {
+            OR: [
+              { firstName: { contains: search, mode: 'insensitive' } },
+              { lastName: { contains: search, mode: 'insensitive' } }
+            ]
+          }
+        }
+      ]
+    }
+
+    const users = await this.db.user.findMany({
+      where,
       skip,
       take: limit,
       include: {
@@ -80,6 +110,15 @@ export class UsersService {
         createdAt: 'desc'
       }
     })
+
+    const totalUsers = await this.db.user.count({ where })
+
+    return {
+      users,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page
+    }
   }
 
   private generateUniqueTeamCode(): string {
