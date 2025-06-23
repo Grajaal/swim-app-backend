@@ -1,4 +1,13 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Query,
+  UseGuards,
+  Delete,
+  Param,
+  HttpCode,
+  HttpStatus
+} from '@nestjs/common'
 import { UsersService } from './users.service'
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard'
 import { GetUsersDto } from './dto/get-users-dto'
@@ -15,5 +24,12 @@ export class UsersController {
     const { search, role } = query
 
     return this.usersService.users({ page, limit, search, role })
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteUser(@Param('id') userId: string) {
+    await this.usersService.deleteUser(userId)
   }
 }

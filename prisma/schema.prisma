@@ -66,7 +66,7 @@ model Team {
   coachId  String @unique @map("coach_id")
   teamCode String @unique @map("team_code")
 
-  coach Coach @relation(fields: [coachId], references: [id])
+  coach Coach @relation(fields: [coachId], references: [id], onDelete: Cascade)
 
   swimmers Swimmer[]
   groups   Group[]

@@ -82,7 +82,7 @@ export class GroupsService {
       data: {
         meters,
         minutes,
-        date,
+        date: new Date(date),
         description,
         groupId,
         swimmers: {

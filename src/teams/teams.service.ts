@@ -133,4 +133,39 @@ export class TeamsService {
       }
     })
   }
+
+  async getGroupById(groupId: string) {
+    return await this.db.group.findUnique({
+      where: { id: groupId },
+      include: {
+        swimmers: true,
+        team: true
+      }
+    })
+  }
+
+  async getTrainingsByGroupId(
+    groupId: string,
+    specificDate?: string,
+    startDate?: string,
+    endDate?: string
+  ) {
+    const whereClause: Prisma.TrainingWhereInput = { groupId }
+    if (specificDate) {
+      const date = new Date(specificDate)
+      const startOfDay = new Date(date.setUTCHours(0, 0, 0, 0))
+      const endOfDay = new Date(date.setUTCHours(23, 59, 59, 999))
+      whereClause.date = { gte: startOfDay, lte: endOfDay }
+    } else if (startDate && endDate) {
+      whereClause.date = {
+        gte: new Date(new Date(startDate).setUTCHours(0, 0, 0, 0)),
+        lte: new Date(new Date(endDate).setUTCHours(23, 59, 59, 999))
+      }
+    }
+
+    return await this.db.training.findMany({
+      where: whereClause,
+      orderBy: { date: 'desc' }
+    })
+  }
 }

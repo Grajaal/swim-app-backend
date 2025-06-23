@@ -11,6 +11,9 @@ importers:
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.0.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^4.0.1
+        version: 4.0.1(@nestjs/common@11.0.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/core':
         specifier: ^11.0.1
         version: 11.0.10(@nestjs/common@11.0.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@11.0.10)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -62,6 +65,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      tiktoken:
+        specifier: ^1.0.21
+        version: 1.0.21
     devDependencies:
       '@darraghor/eslint-plugin-nestjs-typed':
         specifier: ^6.4.1
@@ -78,9 +84,6 @@ importers:
       '@nestjs/cli':
         specifier: ^11.0.0
         version: 11.0.4(@swc/cli@0.6.0(@swc/core@1.10.18)(chokidar@4.0.3))(@swc/core@1.10.18)(@types/node@22.13.4)(esbuild@0.25.1)
-      '@nestjs/config':
-        specifier: ^4.0.1
-        version: 4.0.1(@nestjs/common@11.0.10(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(rxjs@7.8.1)
       '@nestjs/schematics':
         specifier: ^11.0.0
         version: 11.0.1(chokidar@4.0.3)(typescript@5.7.3)
@@ -3750,6 +3753,9 @@ packages:
 
   through@2.3.8:
     resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
+
+  tiktoken@1.0.21:
+    resolution: {integrity: sha512-/kqtlepLMptX0OgbYD9aMYbM7EFrMZCL7EoHM8Psmg2FuhXoo/bH64KqOiZGGwa6oS9TPdSEDKBnV2LuB8+5vQ==}
 
   tmp@0.0.33:
     resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}
@@ -7977,6 +7983,8 @@ snapshots:
       b4a: 1.6.7
 
   through@2.3.8: {}
+
+  tiktoken@1.0.21: {}
 
   tmp@0.0.33:
     dependencies:

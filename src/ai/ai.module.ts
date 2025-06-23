@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config'
 import { TeamsService } from 'src/teams/teams.service'
 import { PrismaService } from 'src/prisma.service'
 import { CoachesService } from 'src/coaches/coaches.service'
+import { SwimmersService } from 'src/swimmers/swimmers.service'
 
 @Module({
   controllers: [AiController],
@@ -13,7 +14,8 @@ import { CoachesService } from 'src/coaches/coaches.service'
     ConfigService,
     TeamsService,
     PrismaService,
-    CoachesService
+    CoachesService,
+    SwimmersService
   ]
 })
 export class AiModule {}
