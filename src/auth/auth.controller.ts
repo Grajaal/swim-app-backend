@@ -40,20 +40,37 @@ export class AuthController {
       isSecure,
       origin: req.get('origin'),
       host: req.get('host'),
-      userAgent: req.get('user-agent')
+      userAgent: req.get('user-agent'),
+      referer: req.get('referer')
     })
 
     const cookieOptions = {
-      httpOnly: true,
+      httpOnly: false, // TEMPORARILY disabled for testing
       maxAge: 3600000, // 1 hour
       secure: isSecure,
-      sameSite: 'lax' as const, // Cambio simple: usar 'lax' siempre
+      sameSite: isSecure ? ('none' as const) : ('lax' as const),
       path: '/'
     }
 
     console.log('Cookie options:', cookieOptions)
 
+    // DEBUGGING: Try multiple approaches to set the cookie
     res.cookie('jwt', token, cookieOptions)
+
+    // Also try setting manually with different header variations
+    const manualCookieValue = `jwt=${token}; Path=/; Max-Age=3600; HttpOnly; ${isSecure ? 'Secure; SameSite=None' : 'SameSite=Lax'}`
+    res.setHeader('Set-Cookie', manualCookieValue)
+
+    // Additional debug headers to see what's happening
+    res.setHeader('X-Cookie-Debug', 'cookie-set-attempted')
+    res.setHeader('X-Is-Secure', isSecure.toString())
+
+    console.log('Manual cookie string:', manualCookieValue)
+    console.log('Response headers being set:', {
+      'Set-Cookie': manualCookieValue,
+      'X-Cookie-Debug': 'cookie-set-attempted',
+      'X-Is-Secure': isSecure.toString()
+    })
 
     // Also send token in response for debugging
     return {
@@ -61,7 +78,13 @@ export class AuthController {
       debug: {
         cookieSet: true,
         isSecure,
-        cookieOptions
+        cookieOptions,
+        manualCookieValue,
+        protocolDetection: {
+          'req.protocol': req.protocol,
+          'x-forwarded-proto': req.get('x-forwarded-proto'),
+          'req.secure': req.secure
+        }
       }
     }
   }
@@ -84,7 +107,7 @@ export class AuthController {
     res.clearCookie('jwt', {
       httpOnly: true,
       secure: isSecure,
-      sameSite: 'lax' as const, // Consistente con login
+      sameSite: isSecure ? ('none' as const) : ('lax' as const),
       path: '/'
     })
     return { message: 'Logout successful' }
