@@ -47,7 +47,7 @@ export class AuthController {
       httpOnly: true,
       maxAge: 3600000, // 1 hour
       secure: isSecure,
-      sameSite: isSecure ? ('none' as const) : ('lax' as const),
+      sameSite: 'lax' as const, // Cambio simple: usar 'lax' siempre
       path: '/'
     }
 
@@ -84,7 +84,7 @@ export class AuthController {
     res.clearCookie('jwt', {
       httpOnly: true,
       secure: isSecure,
-      sameSite: isSecure ? ('none' as const) : ('lax' as const),
+      sameSite: 'lax' as const, // Consistente con login
       path: '/'
     })
     return { message: 'Logout successful' }
