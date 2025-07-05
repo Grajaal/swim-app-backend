@@ -1,5 +1,5 @@
 import { PrismaClient, Role, Team, Swimmer } from '@prisma/client'
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcryptjs'
 import { faker } from '@faker-js/faker'
 
 const prisma = new PrismaClient()
