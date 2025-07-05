@@ -20,11 +20,24 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api')
   app.use(cookieParser())
+
+  // Enhanced CORS configuration for cross-domain cookies
   app.enableCors({
     origin: ['http://localhost:3000', 'https://swimapp-demo.vercel.app'],
-    methods: 'GET, POST, PUT, DELETE, PATCH',
-    credentials: true
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+    exposedHeaders: ['Set-Cookie'],
+    credentials: true,
+    optionsSuccessStatus: 200
   })
+
+  // Debug logging for production
+  console.log('Server starting with CORS origins:', [
+    'http://localhost:3000',
+    'https://swimapp-demo.vercel.app'
+  ])
+  console.log('Port:', process.env.PORT ?? 4001)
+
   await app.listen(process.env.PORT ?? 4001)
 }
 bootstrap().catch((err) =>

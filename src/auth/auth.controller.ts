@@ -28,29 +28,42 @@ export class AuthController {
   login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const { token } = this.authService.login(req.user)
 
-    // Detect if we're on HTTPS or HTTP
-    const isSecure = req.secure || req.get('x-forwarded-proto') === 'https'
+    // Better HTTPS detection for production environments
+    const protocol = req.get('x-forwarded-proto') || req.protocol
+    const isSecure = protocol === 'https'
 
-    // Log for debugging
-    console.log('Cookie configuration:', {
+    // Debug logging to understand what's happening in production
+    console.log('Login cookie setup debug:', {
+      protocol: req.protocol,
+      'x-forwarded-proto': req.get('x-forwarded-proto'),
+      secure: req.secure,
       isSecure,
-      headers: {
-        'x-forwarded-proto': req.get('x-forwarded-proto'),
-        origin: req.get('origin'),
-        host: req.get('host')
-      }
+      origin: req.get('origin'),
+      host: req.get('host'),
+      userAgent: req.get('user-agent')
     })
 
-    res.cookie('jwt', token, {
+    const cookieOptions = {
       httpOnly: true,
       maxAge: 3600000, // 1 hour
-      secure: isSecure, // Only secure if HTTPS
-      sameSite: isSecure ? 'none' : 'lax', // none for HTTPS cross-origin, lax for HTTP
-      // Add explicit path for cookie
+      secure: isSecure,
+      sameSite: isSecure ? ('none' as const) : ('lax' as const),
       path: '/'
-    })
+    }
 
-    return { user: req.user }
+    console.log('Cookie options:', cookieOptions)
+
+    res.cookie('jwt', token, cookieOptions)
+
+    // Also send token in response for debugging
+    return {
+      user: req.user,
+      debug: {
+        cookieSet: true,
+        isSecure,
+        cookieOptions
+      }
+    }
   }
 
   @UseGuards(JwtAuthGuard)
@@ -65,12 +78,13 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const isSecure = req.secure || req.get('x-forwarded-proto') === 'https'
+    const protocol = req.get('x-forwarded-proto') || req.protocol
+    const isSecure = protocol === 'https'
 
     res.clearCookie('jwt', {
       httpOnly: true,
       secure: isSecure,
-      sameSite: isSecure ? 'none' : 'lax',
+      sameSite: isSecure ? ('none' as const) : ('lax' as const),
       path: '/'
     })
     return { message: 'Logout successful' }
