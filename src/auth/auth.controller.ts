@@ -28,9 +28,14 @@ export class AuthController {
   login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const { token } = this.authService.login(req.user)
 
+    // Detect if we're on HTTPS or HTTP
+    const isSecure = req.secure || req.get('x-forwarded-proto') === 'https'
+
     res.cookie('jwt', token, {
       httpOnly: true,
-      maxAge: 3600000
+      maxAge: 3600000, // 1 hour
+      secure: isSecure, // Only secure if HTTPS
+      sameSite: isSecure ? 'none' : 'lax' // none for HTTPS cross-origin, lax for HTTP
     })
 
     return { user: req.user }
@@ -47,8 +52,14 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
-  logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('jwt')
+  logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const isSecure = req.secure || req.get('x-forwarded-proto') === 'https'
+
+    res.clearCookie('jwt', {
+      httpOnly: true,
+      secure: isSecure,
+      sameSite: isSecure ? 'none' : 'lax'
+    })
     return { message: 'Logout successful' }
   }
 }
