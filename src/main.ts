@@ -21,7 +21,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api')
   app.use(cookieParser())
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000', 'https://swimapp-demo.vercel.app'],
     methods: 'GET, POST, PUT, DELETE, PATCH',
     credentials: true
   })
