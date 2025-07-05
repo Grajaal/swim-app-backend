@@ -31,11 +31,23 @@ export class AuthController {
     // Detect if we're on HTTPS or HTTP
     const isSecure = req.secure || req.get('x-forwarded-proto') === 'https'
 
+    // Log for debugging
+    console.log('Cookie configuration:', {
+      isSecure,
+      headers: {
+        'x-forwarded-proto': req.get('x-forwarded-proto'),
+        origin: req.get('origin'),
+        host: req.get('host')
+      }
+    })
+
     res.cookie('jwt', token, {
       httpOnly: true,
       maxAge: 3600000, // 1 hour
       secure: isSecure, // Only secure if HTTPS
-      sameSite: isSecure ? 'none' : 'lax' // none for HTTPS cross-origin, lax for HTTP
+      sameSite: isSecure ? 'none' : 'lax', // none for HTTPS cross-origin, lax for HTTP
+      // Add explicit path for cookie
+      path: '/'
     })
 
     return { user: req.user }
@@ -58,7 +70,8 @@ export class AuthController {
     res.clearCookie('jwt', {
       httpOnly: true,
       secure: isSecure,
-      sameSite: isSecure ? 'none' : 'lax'
+      sameSite: isSecure ? 'none' : 'lax',
+      path: '/'
     })
     return { message: 'Logout successful' }
   }
