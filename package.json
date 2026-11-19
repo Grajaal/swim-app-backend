@@ -2,7 +2,7 @@
   "name": "learning-nest",
   "version": "0.0.1",
   "prisma": {
-    "seed": "pnpx ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts"
   },
   "description": "",
   "author": "",
